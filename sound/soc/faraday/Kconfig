@@ -1,0 +1,5 @@
+config SND_SOC_FTSSP010_I2S
+	tristate "Faraday FTSSP010 I2S controller"
+	select SND_SOC_GENERIC_DMAENGINE_PCM
+	help
+	  Faraday FTSSP010 I2S

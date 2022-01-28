@@ -1,0 +1,64 @@
+
+config FB_FTLCDC210
+	tristate "Faraday FTLCDC210 LCD Controller support"
+	depends on FB
+	select FB_CFB_FILLRECT
+	select FB_CFB_COPYAREA
+	select FB_CFB_IMAGEBLIT
+	help
+		This framebuffer device driver is for the Faraday LCD
+		Controller.  Faraday LCD Controller provide the building
+		blocks for System on a Chip devices.
+
+if FB_FTLCDC210
+
+config FB_FTLCDC210_USE_INT
+	bool "Enable Interrupt mode"
+	default y
+
+choice
+	prompt "LCD output device"
+	default FB_FTLCDC210_TPO_TD070WGEC2
+
+config FB_FTLCDC210_AUO_A036QN01_CPLD
+	bool "320x240-AUO_A036QN01_CPLD"
+
+config FB_FTLCDC210_TPO_TD070WGEC2
+	bool "800x480-TPO_TD070WGEC2"
+
+config FB_FTLCDC210_NHD_70800480EF
+	bool "800x480_NHD_70800480EF"
+
+config FB_FTLCDC210_VESA_640x480
+	bool "640x480-VESA"
+
+config FB_FTLCDC210_VESA_800x600
+	bool "800x600-VESA"
+
+config FB_FTLCDC210_VESA_1024x768
+	bool "1024x768-VESA"
+
+config FB_FTLCDC210_VESA_1280x720
+	bool "1280x720-VESA"
+
+config FB_FTLCDC210_VESA_1280x800
+	bool "1280x800-VESA"
+
+config FB_FTLCDC210_VESA_1280x1024
+	bool "1280x1024-VESA"
+
+config FB_FTLCDC210_VESA_1368x768
+	bool "1368x768-VESA"
+
+config FB_FTLCDC210_VESA_1440x900
+	bool "1440x900-VESA"
+
+config FB_FTLCDC210_VESA_1680x1050
+	bool "1680x1050-VESA"
+
+config FB_FTLCDC210_CEA_1920x1080
+	bool "1920x1080-CEA"
+
+endchoice
+
+endif

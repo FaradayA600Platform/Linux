@@ -1,0 +1,192 @@
+/*
+ * Copyright (C) 2021 Faraday, Inc. (www.faraday-tech.com)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+ 
+/dts-v1/;
+
+#include "faraday-ca9.dtsi"
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+
+/  {
+	model = "TS711";
+	
+	memory@20000000 {
+		device_type = "memory";
+		reg = <0x20000000 0x10000000>;
+	};
+	
+	clocks { 
+		compatible = "faraday,ts711evb-clk"; 
+	 
+		osc0: osc0-33mhz { 
+			#clock-cells = <0>; 
+			compatible = "ts711evb,osc0"; 
+			clock-frequency = <33330000>; 
+			clock-output-names = "osc0"; 
+		}; 
+	 
+		osc1: osc1-12mhz { 
+			#clock-cells = <0>; 
+			compatible = "ts711evb,osc1"; 
+			clock-frequency = <12000000>; 
+			clock-output-names = "osc1"; 
+		}; 
+	 
+		osc2: osc2-50mhz { 
+			#clock-cells = <0>; 
+			compatible = "ts711evb,osc2"; 
+			clock-frequency = <50000000>; 
+			clock-output-names = "osc2"; 
+		}; 
+	 
+		pll0_pre_ckout2: pll0_pre_ckout2 { 
+			#clock-cells = <0>; 
+			compatible = "ts711evb,pll0_pre_ckout2"; 
+			clock-div = <16>; 
+			clock-output-names = "pll0_pre_ckout2"; 
+			clocks = <&osc0>; 
+		}; 
+	 
+		pll0_ckout0b: pll0_ckout0b { 
+			#clock-cells = <0>; 
+			compatible = "ts711evb,pll0_ckout0b"; 
+			clock-div = <1>; 
+			clock-output-names = "pll0_ckout0b"; 
+			clocks = <&pll0_pre_ckout2>; 
+		}; 
+	 
+		pll1_ckout2: pll1_ckout2 { 
+			#clock-cells = <0>; 
+			compatible = "ts711evb,pll1_ckout2"; 
+			clock-div = <2>; 
+			clock-output-names = "pll1_ckout2"; 
+			clocks = <&osc0>; 
+		}; 
+	 
+		pll2: pll2 { 
+			#clock-cells = <0>; 
+			compatible = "ts711evb,pll2"; 
+			clock-div = <1>; 
+			clock-output-names = "pll2"; 
+			clocks = <&osc0>; 
+		}; 
+	 	 
+		aclk: aclk { 
+			#clock-cells = <0>; 
+			compatible = "ts711evb,aclk"; 
+			clock-mult = <1>; 
+			clock-div = <2>; 
+			clock-output-names = "aclk"; 
+			clocks = <&pll2>; 
+		}; 
+	 
+		hclk: hclk { 
+			#clock-cells = <0>; 
+			compatible = "ts711evb,hclk"; 
+			clock-mult = <1>; 
+			clock-div = <4>; 
+			clock-output-names = "hclk"; 
+			clocks = <&pll2>; 
+		}; 
+	 
+		pclk: pclk { 
+			#clock-cells = <0>; 
+			compatible = "ts711evb,pclk"; 
+			clock-mult = <1>; 
+			clock-div = <8>; 
+			clock-output-names = "pclk"; 
+			clocks = <&pll2>; 
+		}; 
+ 
+		cpu: cpu { 
+			#clock-cells = <0>; 
+			compatible = "ts711evb,cpu"; 
+			clock-mult = <1>; 
+			clock-div = <1>; 
+			clock-output-names = "cpu"; 
+			clocks = <&pll0_ckout0b>; 
+		}; 
+		 
+		ddrmclk: ddrmclk { 
+			#clock-cells = <0>; 
+			compatible = "ts711evb,ddrmclk"; 
+			clock-mult = <1>; 
+			clock-div = <1>; 
+			clock-output-names = "ddrmclk"; 
+			clocks = <&pll1_ckout2>; 
+		}; 
+	}; 
+};
+
+&soc {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	
+	gic: interrupt-controller@F4001000 {
+		compatible = "arm,cortex-a9-gic";
+		interrupt-parent = <&gic>;
+		interrupt-controller;
+		#interrupt-cells = <3>;
+		#address-cells = <1>;
+		reg = <0xf4001000 0x1000>,
+			  <0xf4000100 0x100>;
+		interrupts = <GIC_PPI 9 0xF04>;
+	};
+	
+	fttmr: fttmr@80200000 { 
+		compatible = "faraday,fttmr010"; 
+		interrupt-parent = <&gic>; 
+		clocks = <&pclk>; 
+		reg = <0x80200000 0x1000>; 
+		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>; 
+		status = "okay"; 
+	}; 
+	
+	uart0: uart@80a00000 {
+		compatible = "of_serial", "ns16550a";
+		interrupt-parent = <&gic>;
+		clock-frequency = <33330000>;
+		reg = <0x80a00000 0x1000>;
+		reg-offset = <0>;
+		reg-shift = <2>;
+		reg-io-width = <4>;
+		no-loopback-test;
+	};
+	
+	spi0: spi@82100000 {
+		compatible = "faraday,ftspi020_spi";
+		interrupt-parent = <&gic>;
+		reg = <0x82100000 0x200>;
+		num-cs = <4>;
+		cs = <0>;
+		max_hz = <20000000>;
+		interrupts = <GIC_SPI 69 IRQ_TYPE_EDGE_RISING>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		
+		spi0_flash0: spi0_flash0@0 {
+			compatible = "en25qh256";
+			#address-cells = <1>;
+			#size-cells = <1>;
+			spi-max-frequency = <50000000>;
+			reg = <0>;
+			
+			spi0_flash0@00000000 {
+			label = "spi0_flash0";
+			reg = <0x0 0x100000>;
+			};
+		};
+		
+		spi-nand@0 {
+			#address-cells = <1>;
+			#size-cells = <1>;
+			compatible = "spi-nand";
+			spi-max-frequency = <40000000>;
+			reg = <0>;
+		};
+	};
+};

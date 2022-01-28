@@ -1,0 +1,24 @@
+#
+# arch/arm/mach-ts711/Kconfig
+#
+
+if MACH_TS711
+
+menu "Faraday TS711 Platform Options"
+	depends on MACH_TS711
+
+config UART_CLOCK
+	int "UART clock tick rate"
+	default 33330000 if MACH_TS711
+	help
+	  The frequency of the UART reference clock.
+
+config ARM_ACP
+	bool "ARM Accelerator Coherency Port Support"
+	depends on CPU_CA9
+	help
+	  This enables Accelerator Coherency Port for ARM.
+	  
+endmenu
+
+endif

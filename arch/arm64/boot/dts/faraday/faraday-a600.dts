@@ -1,0 +1,683 @@
+/*
+ * Copyright (C) 2014 Faraday, Inc. (www.faraday-tech.com)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+
+/dts-v1/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/clock/clock-a600.h>
+
+/ {
+	model = "A600";
+	compatible = "arm,faraday-soc-a600","faraday-soc-v8";
+	interrupt-parent = <&gic>;
+	#address-cells = <2>;
+	#size-cells = <2>;
+
+	aliases {
+		serial0 = &uart0;
+		serial1 = &uart1;
+		serial2 = &uart2;
+		serial3 = &uart3;
+	};
+
+	cpus {
+		#address-cells = <2>;
+		#size-cells = <0>;
+		
+		cpu@0 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a53","arm,armv8";
+			clock-frequency = <1500000000>;
+			reg = <0x0 0x100>;
+			enable-method = "psci";
+		};
+		cpu@1 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a53","arm,armv8";
+			clock-frequency = <1500000000>;
+			reg = <0x0 0x101>;
+			enable-method = "spin-table";
+			cpu-release-addr = <0x0 0x28030008>;
+		};
+		cpu@2 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a53","arm,armv8";
+			clock-frequency = <1500000000>;
+			reg = <0x0 0x102>;
+			enable-method = "spin-table";
+			cpu-release-addr = <0x0 0x28030008>;
+		};
+		cpu@3 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a53","arm,armv8";
+			clock-frequency = <1500000000>;
+			reg = <0x0 0x103>;
+			enable-method = "spin-table";
+			cpu-release-addr = <0x0 0x28030008>;
+		};
+	};
+
+	memory@80000000 {
+		device_type = "memory";
+		reg = <0x0 0x80000000 0x0 0x7F800000>;
+	};
+
+	gic: interrupt-controller@28600000 {
+		compatible = "arm,gic-400";
+		#interrupt-cells = <3>;
+		#address-cells = <0>;
+		interrupt-controller;
+		reg = <0x0 0x28601000 0x0 0x1000>,
+		      <0x0 0x28602000 0x0 0x1000>;
+	};
+
+	timer {
+		compatible = "arm,armv8-timer";
+		interrupt-parent = <&gic>;
+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_RAW(0xff)|IRQ_TYPE_LEVEL_LOW)>,
+		             <GIC_PPI 14 (GIC_CPU_MASK_RAW(0xff)|IRQ_TYPE_LEVEL_LOW)>,
+		             <GIC_PPI 11 (GIC_CPU_MASK_RAW(0xff)|IRQ_TYPE_LEVEL_LOW)>,
+		             <GIC_PPI 10 (GIC_CPU_MASK_RAW(0xff)|IRQ_TYPE_LEVEL_LOW)>;
+		clock-frequency = <375000000>;
+		status = "okay";
+	};
+
+	chosen {
+		bootargs = "mem=2040M console=ttyS0,115200 earlycon=uart8250,mmio32,0x20700000";
+	};
+
+	rst0: reset-controller@2ae00000 {
+		compatible = "faraday,a600-reset";
+		#reset-cells = <2>;
+		reg = <0x0 0x2ae00000 0x0 0x1000>;
+		status = "okay";
+	};
+
+	rst1: reset-controller@2d080000 {
+		compatible = "faraday,a600-reset";
+		#reset-cells = <2>;
+		reg = <0x0 0x2d080000 0x0 0x1000>;
+		status = "okay";
+	};
+
+	clk: clocks@2d000000 {
+		compatible = "faraday,a600-clk";
+		reg = <0x0 0x2d000000 0x0 0xa0000>,
+		      <0x0 0x2ae00000 0x0 0x1000>;
+		reg-names = "scu", "ext_reg";
+		#clock-cells = <1>;
+	};
+
+	soc {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		compatible = "simple-bus";
+		ranges;
+
+		uart0: uart@20700000 {
+			compatible = "of_serial", "ns16550a";
+			interrupt-parent = <&gic>;
+			clock-frequency = <58823529>;
+			reg = <0x0 0x20700000 0x0 0x1000>;
+			reg-offset = <0>;
+			reg-shift = <2>;
+			reg-io-width = <4>;
+			no-loopback-test;
+			interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+			/*clocks = <&clk A600_UART0_CK_EN>;
+			clock-names = "uclk";*/
+			resets = <&rst0 0x0064 18>;
+			reset-names = "rstn";
+			status = "okay";
+		};
+
+		uart1: uart@20800000 {
+			compatible = "of_serial", "ns16550a";
+			interrupt-parent = <&gic>;
+			clock-frequency = <58823529>;
+			reg = <0x0 0x20800000 0x0 0x1000>;
+			reg-offset = <0>;
+			reg-shift = <2>;
+			reg-io-width = <4>;
+			no-loopback-test;
+			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+			/*clocks = <&clk A600_UART1_CK_EN>;
+			clock-names = "uclk";*/
+			resets = <&rst0 0x0064 19>;
+			reset-names = "rstn";
+			status = "okay";
+		};
+
+		uart2: uart@20900000 {
+			compatible = "of_serial", "ns16550a";
+			interrupt-parent = <&gic>;
+			clock-frequency = <58823529>;
+			reg = <0x0 0x20900000 0x0 0x1000>;
+			reg-offset = <0>;
+			reg-shift = <2>;
+			reg-io-width = <4>;
+			no-loopback-test;
+			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+			/*clocks = <&clk A600_UART2_CK_EN>;
+			clock-names = "uclk";*/
+			resets = <&rst0 0x0064 20>;
+			reset-names = "rstn";
+			status = "okay";
+		};
+
+		uart3: uart@20a00000 {
+			compatible = "of_serial", "ns16550a";
+			interrupt-parent = <&gic>;
+			clock-frequency = <58823529>;
+			reg = <0x0 0x20a00000 0x0 0x1000>;
+			reg-offset = <0>;
+			reg-shift = <2>;
+			reg-io-width = <4>;
+			no-loopback-test;
+			interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+			/*clocks = <&clk A600_UART3_CK_EN>;
+			clock-names = "uclk";*/
+			resets = <&rst0 0x0064 21>;
+			reset-names = "rstn";
+			status = "okay";
+		};
+
+		wdt0: wdt@20500000 {
+			compatible = "faraday,ftwdt011";
+			interrupt-parent = <&gic>;
+			reg = <0x0 0x20500000 0x0 0x1000>;
+			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_WDT0_PCLK_EN>, <&clk A600_WDT_EXTCLK>;
+			clock-names = "pclk", "extclk";
+			resets = <&rst0 0x0064 16>;
+			reset-names = "rstn";
+			status = "disabled";
+		};
+
+		wdt1: wdt@2d500000 {
+			compatible = "faraday,ftwdt011";
+			interrupt-parent = <&gic>;
+			reg = <0x0 0x2d500000 0x0 0x1000>;
+			interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_WDT1_PCLK_EN>, <&clk A600_WDT_EXTCLK>;
+			clock-names = "pclk", "extclk";
+			resets = <&rst1 0x0038 2>;
+			reset-names = "rstn";
+			status = "disabled";
+		};
+
+		efuse0@28500000 {
+			compatible = "faraday,ftc-efuse";
+			interrupt-parent = <&gic>;
+			reg = <0x0 0x28500000 0x0 0x10000>;
+			efuse-size = <512>;
+			resets = <&rst1 0x0038 0>;
+			reset-names = "rstn";
+			status = "disabled";
+		};
+
+		tdc0: thermal@21000000 {
+			compatible = "faraday,fttdcc010";
+			interrupt-parent = <&gic>;
+			reg = <0x0 0x21000000 0x0 0x1000>;
+			interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
+			resets = <&rst0 0x0064 1>;
+			reset-names = "rstn";
+			status = "disabled";
+		};
+
+		adc0: adc@21100000 {
+			compatible = "faraday,ftadcc010";
+			interrupt-parent = <&gic>;
+			reg = <0x0 0x21100000 0x0 0x1000>;
+			interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
+			resets = <&rst0 0x0064 2>;
+			reset-names = "rstn";
+			status = "disabled";
+		};
+
+		i2c0: i2c@20100000 {
+			compatible = "faraday,ftiic010";
+			interrupt-parent = <&gic>;
+			dev_id = <0>;
+			reg = <0x0 0x20100000 0x0 0x1000>;
+			interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_I2C0_PCLK_EN>;
+			clock-names = "pclk";
+			resets = <&rst0 0x006C 0>;
+			reset-names = "rstn";
+			status = "okay";
+		};
+
+		i2c1: i2c@20200000 {
+			compatible = "faraday,ftiic010";
+			interrupt-parent = <&gic>;
+			dev_id = <1>;
+			reg = <0x0 0x20200000 0x0 0x1000>;
+			interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_I2C1_PCLK_EN>;
+			clock-names = "pclk";
+			resets = <&rst0 0x006C 1>;
+			reset-names = "rstn";
+			status = "okay";
+
+			#address-cells = <1>;
+			#size-cells = <0>;
+			wm8731: wm8731@1b {
+				#sound-dai-cells = <0>;
+				compatible = "wlf,wm8731";
+				reg = <0x1b>;
+			};
+		};
+
+		i2c2: i2c@20300000 {
+			compatible = "faraday,ftiic010";
+			interrupt-parent = <&gic>;
+			dev_id = <2>;
+			reg = <0x0 0x20300000 0x0 0x1000>;
+			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_I2C2_PCLK_EN>;
+			clock-names = "pclk";
+			resets = <&rst0 0x006C 2>;
+			reset-names = "rstn";
+			status = "okay";
+		};
+
+		i2c3: i2c@20400000 {
+			compatible = "faraday,ftiic010";
+			interrupt-parent = <&gic>;
+			dev_id = <3>;
+			reg = <0x0 0x20400000 0x0 0x1000>;
+			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_I2C3_PCLK_EN>;
+			clock-names = "pclk";
+			resets = <&rst0 0x006C 3>;
+			reset-names = "rstn";
+			status = "okay";
+		};
+
+		gpio0: gpio@20e00000 {
+			compatible = "faraday,ftgpio010";
+			interrupt-parent = <&gic>;
+			dev_id = <0>;
+			#gpio-cells = <2>;
+			reg = <0x0 0x20e00000 0x0 0x1000>;
+			interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_GPIO_PCLK_EN>;
+			clock-names = "pclk";
+			resets = <&rst0 0x0064 17>;
+			reset-names = "rstn";
+			status = "okay";
+		};
+
+		pwm0: pwm@20600000 {
+			compatible = "faraday,ftpwmtmr010-pwm";
+			interrupt-parent = <&gic>;
+			reg = <0x0 0x20600000 0x0 0x1000>;
+			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_PWM0_PCLK_EN>;
+			clock-names = "pclk";
+			resets = <&rst0 0x0064 0>;
+			reset-names = "rstn";
+			status = "okay";
+		};
+
+		pwm1: pwm@2d600000 {
+			compatible = "faraday,ftpwmtmr010-pwm";
+			interrupt-parent = <&gic>;
+			reg = <0x0 0x2d600000 0x0 0x1000>;
+			interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_PWM1_PCLK_EN>;
+			clock-names = "pclk";
+			resets = <&rst1 0x0038 4>;
+			reset-names = "rstn";
+			status = "okay";
+		};
+
+		dma0: ftdmac030@2d100000 {
+			compatible = "faraday,ftdmac030";
+			interrupt-parent = <&gic>;
+			dev_id = <0>;
+			#dma-cells = <3>;
+			reg = <0x0 0x2d100000 0x0 0x1000>;
+			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_DMAC0_ACLK_EN>, <&clk A600_DMAC0_PCLK_EN>;
+			clock-names = "aclk", "pclk";
+			resets = <&rst1 0x0038 3>;
+			reset-names = "rstn";
+			status = "okay";
+		};
+
+		dma1: ftdmac030@2a800000 {
+			compatible = "faraday,ftdmac030";
+			interrupt-parent = <&gic>;
+			dev_id = <1>;
+			#dma-cells = <3>;
+			reg = <0x0 0x2a800000 0x0 0x1000>;
+			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_DMAC1_ACLK_EN>, <&clk A600_DMAC1_PCLK_EN>;
+			clock-names = "aclk", "pclk";
+			resets = <&rst0 0x0064 15>;
+			reset-names = "rstn";
+			status = "okay";
+		};
+
+		hbmc: hyperbus@28800000 {
+			/*compatible = "faraday,hbmc-ftc";*/
+			compatible = "ti,am654-hbmc";
+			reg = <0x0 0x28800000 0x0 0x100>;
+			#address-cells = <2>;
+			#size-cells = <1>;
+			ranges = <0x0 0x0 0x0 0x38000000 0x8000000>; /* CS0 - 128MB */
+			clocks = <&clk A600_HB_ACLK_EN>, <&clk A600_HB_CK_EN>;
+			clock-names = "aclk", "misclk";
+			resets = <&rst0 0x006C 4>;
+			reset-names = "rstn";
+			status = "disabled";
+
+			/* Slave flash node */
+			flash@0,0 {
+				compatible = "cypress,hyperflash", "cfi-flash";
+				reg = <0x0 0x00000000 0x2000000>; /* S26KS256S */
+			};
+		};
+
+		spi0: spi@28300000 {
+			compatible = "faraday,ftspi020";
+			interrupt-parent = <&gic>;
+			broken-flash-reset;
+			reg = <0x0 0x28300000 0x0 0x1000>,
+			      <0x0 0x10000000 0x0 0x2000000>;
+			reg-names = "ctrl-port", "damr-port";
+			interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_SPICLK_CK_EN>;
+			clock-names = "spiclk";
+			resets = <&rst1 0x0038 1>;
+			reset-names = "rstn";
+			status = "okay";
+			
+			#address-cells = <1>;
+			#size-cells = <0>;
+			dmas = <&dma0 0 0xff 8>; /* id, channel, req-sel */
+			dma-names = "tx-rx";
+			s25sl032p: flash@0 { //0x010215
+				compatible = "jedec,spi-nor";
+				spi-max-frequency = <25000000>;
+				spi-tx-bus-width = <4>;
+				spi-rx-bus-width = <4>;
+				reg = <0x0>;
+				is-nand = <0>;
+			};
+		};
+
+		ssp0: spi@20b00000 {
+			compatible = "faraday,ftssp010-spi";
+			interrupt-parent = <&gic>;
+			dev_id = <1>;
+			reg = <0x0 0x20b00000 0x0 0x1000>;
+			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_SPI0_PCLK_EN>, <&clk A600_SPI0_SSPCLK_CK_EN>;
+			clock-names = "pclk", "sspclk";
+			resets = <&rst0 0x0064 11>;
+			reset-names = "rstn";
+			status = "okay";
+			
+			#address-cells = <1>;
+			#size-cells = <0>;
+			dmas = <&dma1 1 0xFF 10>, <&dma1 1 0xFF 11>;
+			dma-names = "tx", "rx";
+			spidev0: master@0 {
+				compatible = "rohm,dh2228fv";
+				spi-max-frequency = <20000000>;
+				reg = <0>;
+			};
+		};
+
+		ssp1: spi@20c00000 {
+			compatible = "faraday,ftssp010-spi";
+			interrupt-parent = <&gic>;
+			dev_id = <2>;
+			reg = <0x0 0x20c00000 0x0 0x1000>;
+			interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_SPI1_PCLK_EN>, <&clk A600_SPI1_SSPCLK_CK_EN>;
+			clock-names = "pclk", "sspclk";
+			resets = <&rst0 0x0064 12>;
+			reset-names = "rstn";
+			status = "okay";
+			
+			#address-cells = <1>;
+			#size-cells = <0>;
+			dmas = <&dma1 1 0xFF 12>, <&dma1 1 0xFF 13>;
+			dma-names = "tx", "rx";
+			spidev1: master@0 {
+				compatible = "rohm,dh2228fv";
+				spi-max-frequency = <20000000>;
+				reg = <0>;
+			};
+		};
+
+		sd0: sd@24300000 {
+			compatible = "faraday,ftsdc021-sdhci";
+			interrupt-parent = <&gic>;
+			reg = <0x0 0x24300000 0x0 0x1000>;
+			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_SD0_HCLK_EN>, <&clk A600_SD0_SDCLK1X>;
+			clock-names = "sysclk", "sdclk1x";
+			resets = <&rst0 0x0064 5>;
+			reset-names = "rstn";
+			pulse-latch = <0>;
+			bus-width = <4>;
+			no-1-8-v;
+			status = "okay";
+		};
+
+		sd1: sd@24400000 {
+			compatible = "faraday,ftsdc021-sdhci";
+			interrupt-parent = <&gic>;
+			reg = <0x0 0x24400000 0x0 0x1000>;
+			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_SD1_HCLK_EN>, <&clk A600_SD1_SDCLK1X>;
+			clock-names = "sysclk", "sdclk1x";
+			resets = <&rst0 0x0064 6>;
+			reset-names = "rstn";
+			pulse-latch = <1>;
+			bus-width = <4>;
+			no-1-8-v;
+			status = "okay";
+		};
+
+		usb0: usb@24500000 {
+			compatible = "snps,dwc2";
+			interrupt-parent = <&gic>;
+			reg = <0x0 0x24500000 0x0 0x10000>;
+			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+			dr_mode = "otg";
+			g-rx-fifo-size = <256>;
+			g-np-tx-fifo-size = <32>;
+			/*
+			* According to dwc2 the sum of all device EP
+			* fifo sizes shouldn't exceed 1368 bytes.
+			*/
+			g-tx-fifo-size = <128 128 128 128>;
+			clocks = <&clk A600_USB2_0_HCLK_EN>;
+			clock-names = "otg";
+			resets = <&rst0 0x0064 23>, <&rst0 0x0064 25>;
+			reset-names = "dwc2", "dwc2_por";
+			status = "okay";
+		};
+
+		usb1: usb@24600000 {
+			compatible = "snps,dwc2";
+			interrupt-parent = <&gic>;
+			reg = <0x0 0x24600000 0x0 0x10000>;
+			interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+			dr_mode = "otg";
+			g-rx-fifo-size = <256>;
+			g-np-tx-fifo-size = <32>;
+			/*
+			* According to dwc2 the sum of all device EP
+			* fifo sizes shouldn't exceed 1368 bytes.
+			*/
+			g-tx-fifo-size = <128 128 128 128>;
+			clocks = <&clk A600_USB2_1_HCLK_EN>;
+			clock-names = "otg";
+			resets = <&rst0 0x0064 24>, <&rst0 0x0064 26>;
+			reset-names = "dwc2", "dwc2_por";
+			status = "okay";
+		};
+
+		gmac0: gmac@2aa000000 {
+			compatible = "faraday,ftgmac030";
+			interrupt-parent = <&gic>;
+			dev_id = <0>;
+			reg = <0x0 0x2aa00000 0x0 0x1000>;
+			clocks = <&clk A600_GMAC0_ACLK_EN>, <&clk A600_GMAC0_PCLK_EN>, <&clk A600_GMAC0_CK_EN>;
+			clock-names = "sysclk", "pclk", "misclk";
+			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+			resets = <&rst0 0x0064 3>;
+			reset-names = "rstn";
+			phy-mode = "rgmii-id";
+			status = "okay";
+		};
+
+		gmac1: gmac@2ab000000 {
+			compatible = "faraday,ftgmac030";
+			interrupt-parent = <&gic>;
+			dev_id = <1>;
+			reg = <0x0 0x2ab00000 0x0 0x1000>;
+			clocks = <&clk A600_GMAC1_ACLK_EN>, <&clk A600_GMAC1_PCLK_EN>, <&clk A600_GMAC1_CK_EN>;
+			clock-names = "sysclk", "pclk", "misclk";
+			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+			resets = <&rst0 0x0064 4>;
+			reset-names = "rstn";
+			phy-mode = "rgmii-id";
+			status = "okay";
+		};
+
+		vpu0: vpu@2ad00000 {
+			compatible = "chipsnmedia,vpu";
+			interrupt-parent = <&gic>;
+			reg = <0x0 0x2ad00000 0x0 0x2000>;
+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_H265_ACLK_EN>, <&clk A600_H265_PCLK_EN>, <&clk A600_H265_CK_EN>;
+			clock-names = "aclk", "pclk", "misclk";
+			resets = <&rst0 0x0064 9>;
+			reset-names = "rstn";
+			status = "okay";
+		};
+
+		lcd0: lcd@2a900000 {
+			compatible = "faraday,ftlcdc210";
+			interrupt-parent = <&gic>;
+			reg = <0x0 0x2a900000 0x0 0x10000>;
+			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
+			             <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
+			             <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
+			             <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_LCDC_ACLK_EN>, <&clk A600_LCDC_PCLK_EN>, <&clk A600_LC_CK_EN>, <&clk A600_LC_SCALER_CK_EN>;
+			clock-names = "sysclk", "pclk", "lcclk", "scaclk";
+			resets = <&rst0 0x0064 22>, <&rst0 0x0064 8>, <&rst0 0x0064 7>;
+			reset-names = "rstn", "rstn_lcclk", "rstn_scaclk";
+			status = "okay";
+		};
+
+		i2s0: i2s@20d00000 {
+			compatible = "faraday,ftssp010-i2s";
+			interrupt-parent = <&gic>;
+			#sound-dai-cells = <0>;
+			dmas = <&dma1 1 0xFF 8>, <&dma1 1 0xFF 9>;
+			dma-names = "tx", "rx";
+			reg = <0x0 0x20d00000 0x0 0x1000>;
+			interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clk A600_I2S_PCLK_EN>, <&clk A600_I2S_SSPCLK_CK_EN>;
+			clock-names = "pclk", "sspclk_i2s";
+			resets = <&rst0 0x0064 10>;
+			reset-names = "rstn";
+			status = "okay";
+		};
+
+		sound0 {
+			compatible = "simple-audio-card";
+			simple-audio-card,name = "a600";
+			simple-audio-card,format = "i2s";
+			simple-audio-card,bitclock-master = <&sound0_codec>;
+			simple-audio-card,frame-master = <&sound0_codec>;
+			simple-audio-card,widgets = "Headphone", "Headphone Jack",
+			                            "Speaker", "Ext Spk",
+			                            "Microphone", "Microphone Jack",
+			                            "Line", "Line In Jack";
+			simple-audio-card,routing = "Headphone Jack", "LHPOUT",
+			                            "Headphone Jack", "RHPOUT",
+			                            "Ext Spk", "LOUT",
+			                            "Ext Spk", "ROUT",
+			                            "MICIN", "Microphone Jack",
+			                            "LLINEIN", "Line In Jack",
+			                            "RLINEIN", "Line In Jack";
+			sound0_cpu: simple-audio-card,cpu {
+				sound-dai = <&i2s0>;
+			};
+			sound0_codec: simple-audio-card,codec {
+				sound-dai = <&wm8731>;
+			};
+		};
+
+		soteria0:soteria@28c00000 {
+			compatible = "faraday,soteria";
+			interrupt-parent = <&gic>;
+			reg = <0x0 0x28c00000 0x0 0x1000>;
+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+			status = "disabled";
+		};
+
+		pcie0: pcie@2af00000 {
+			compatible = "faraday,ftpciesnps330";
+			interrupt-parent = <&gic>;
+			num-lanes = <4>;
+			bus-range = <0x0 0xff>;
+			reg = <0x0 0x2af00000 0x0 0x00001000>,
+			      <0x0 0x2b100000 0x0 0x00030000>,
+			      <0x0 0x2e000000 0x0 0x00400000>;
+			#address-cells = <3>;
+			#size-cells = <2>;
+			ranges = <0x00000000 0x0 0x40000000 0x0 0x40000000 0x0 0x01000000     /* configuration space */
+			          0x02000000 0x0 0x41000000 0x0 0x41000000 0x0 0x1f000000>;   /* non-prefetchable memory */
+			interrupts = <GIC_SPI 8 IRQ_TYPE_EDGE_RISING>;
+			#interrupt-cells = <1>;
+			interrupt-map-mask = <0 0 0 0>;
+			interrupt-map = <0 0 0 0 &gic GIC_SPI 8 IRQ_TYPE_EDGE_RISING>;
+			clocks = <&clk A600_PCIE0_ACLK_EN>, <&clk A600_PCIE0_PCLK_EN>;
+			clock-names = "aclk", "pclk";
+			resets = <&rst0 0x0064 13>;
+			reset-names = "rstn";
+			status = "okay";
+		};
+
+		pcie1: pcie@2b000000 {
+			compatible = "faraday,ftpciesnps330";
+			interrupt-parent = <&gic>;
+			num-lanes = <4>;
+			bus-range = <0x0 0xff>;
+			reg = <0x0 0x2b000000 0x0 0x00001000>,
+			      <0x0 0x2b200000 0x0 0x00030000>,
+			      <0x0 0x2e400000 0x0 0x00400000>;
+			#address-cells = <3>;
+			#size-cells = <2>;
+			ranges = <0x00000000 0x0 0x60000000 0x0 0x60000000 0x0 0x01000000   /* configuration space */
+			          0x02000000 0x0 0x61000000 0x0 0x61000000 0x0 0x1f000000>; /* non-prefetchable memory */
+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+			#interrupt-cells = <1>;
+			interrupt-map-mask = <0 0 0 0>;
+			interrupt-map = <0 0 0 0 &gic GIC_SPI 9 IRQ_TYPE_EDGE_RISING>;
+			clocks = <&clk A600_PCIE1_ACLK_EN>, <&clk A600_PCIE1_PCLK_EN>;
+			clock-names = "aclk", "pclk";
+			resets = <&rst0 0x0064 14>;
+			reset-names = "rstn";
+			status = "okay";
+		};
+	};
+};

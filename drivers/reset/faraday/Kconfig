@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: GPL-2.0-only
+config COMMON_RESET_A500
+	tristate "Faraday A500 Reset Driver"
+	depends on ARCH_FARADAY || COMPILE_TEST
+	help
+	  Build the Faraday A500 reset driver.
+
+config COMMON_RESET_A600
+	tristate "Faraday A600 Reset Driver"
+	depends on ARCH_FARADAY || COMPILE_TEST
+	help
+	  Build the Faraday A600 reset driver.
