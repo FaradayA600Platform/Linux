@@ -607,7 +607,13 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
 
 	/* Program correct class for RC */
 	dw_pcie_writew_dbi(pci, PCI_CLASS_DEVICE, PCI_CLASS_BRIDGE_PCI);
-
+#ifdef CONFIG_A600_PLATFORM
+	// workaround: program correct TX_PRESET
+	val = dw_pcie_readl_dbi(pci, 0x188);
+	val &= 0x00000000;
+	val |= 0x44444444;	//USP_TXPRESETn and DSP_TXPRESETn
+	dw_pcie_writel_dbi(pci, 0x188, val);
+#endif
 	val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
 	val |= PORT_LOGIC_SPEED_CHANGE;
 	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);

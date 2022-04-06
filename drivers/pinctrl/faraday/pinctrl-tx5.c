@@ -27,14 +27,14 @@
 
 #include "pinctrl-ftscu010.h"
 
-#define TX5_PMUR_MFS0 0x500
-#define TX5_PMUR_MFS1 0x504
-#define TX5_PMUR_MFS2 0x508
-#define TX5_PMUR_MFS3 0x50c
-#define TX5_PMUR_MFS4 0x510
-#define TX5_PMUR_MFS5 0x514
-#define TX5_PMUR_MFS6 0x518
-#define TX5_PMUR_MFS7 0x51c
+#define TX5_PMUR_MFS0 0x898
+#define TX5_PMUR_MFS1 0x89c
+#define TX5_PMUR_MFS2 0x8a0
+#define TX5_PMUR_MFS3 0x8a4
+#define TX5_PMUR_MFS4 0x8a8
+#define TX5_PMUR_MFS5 0x8ac
+#define TX5_PMUR_MFS6 0x8b0
+#define TX5_PMUR_MFS7 0x8b4
 
 /* Pins */
 enum{
@@ -153,6 +153,12 @@ enum{
 	TX5_PIN_X_XMC_DATA_13,
 	TX5_PIN_X_XMC_DATA_14,
 	TX5_PIN_X_XMC_DATA_15,
+	TX5_PIN_X_UART0_CTSN,
+	TX5_PIN_X_UART1_CTSN,
+	TX5_PIN_X_USART0_TX,
+	TX5_PIN_X_USART0_RX,
+	TX5_PIN_X_USART0_CTSN,
+	TX5_PIN_X_USART0_RTSN,
 };
 
 #define TX5_PINCTRL_PIN(x) PINCTRL_PIN(TX5_PIN_ ## x, #x)
@@ -273,12 +279,32 @@ static const struct pinctrl_pin_desc tx5_pins[] = {
 	TX5_PINCTRL_PIN(X_XMC_DATA_13),
 	TX5_PINCTRL_PIN(X_XMC_DATA_14),
 	TX5_PINCTRL_PIN(X_XMC_DATA_15),
+	TX5_PINCTRL_PIN(X_UART0_CTSN),
+	TX5_PINCTRL_PIN(X_UART1_CTSN),
+	TX5_PINCTRL_PIN(X_USART0_TX),
+	TX5_PINCTRL_PIN(X_USART0_RX),
+	TX5_PINCTRL_PIN(X_USART0_CTSN),
+	TX5_PINCTRL_PIN(X_USART0_RTSN),
 };
 
 /* Pin groups */
 static const unsigned can_fd_2_pins[] = {
 	TX5_PIN_X_GPIO_17,
 	TX5_PIN_X_GPIO_18,
+};
+static const unsigned dac_top_pins[] = {
+	TX5_PIN_X_USART0_TX,
+};
+static const unsigned dac_top_1_pins[] = {
+	TX5_PIN_X_UART0_CTSN,
+	TX5_PIN_X_USART0_RX,
+};
+static const unsigned dac_top_2_pins[] = {
+	TX5_PIN_X_UART1_CTSN,
+	TX5_PIN_X_USART0_CTSN,
+};
+static const unsigned dac_top_3_pins[] = {
+	TX5_PIN_X_USART0_RTSN,
 };
 static const unsigned ftgpio010_pins[] = {
 	TX5_PIN_X_Boot_Fail,
@@ -422,6 +448,12 @@ static const unsigned ftssp010_3_pins[] = {
 	TX5_PIN_X_EQEP_AIN_8,
 	TX5_PIN_X_EQEP_AIN_9,
 };
+static const unsigned ftuart010_pins[] = {
+	TX5_PIN_X_UART0_CTSN,
+};
+static const unsigned ftuart010_1_pins[] = {
+	TX5_PIN_X_UART1_CTSN,
+};
 static const unsigned ftuart010_2_pins[] = {
 	TX5_PIN_X_EQEP_I_10,
 	TX5_PIN_X_EQEP_I_11,
@@ -441,6 +473,12 @@ static const unsigned ftuart010_3_pins[] = {
 	TX5_PIN_X_SEC_CPU_TDO,
 	TX5_PIN_X_SEC_CPU_TMS,
 	TX5_PIN_X_SEC_CPU_TRSTn,
+};
+static const unsigned ftusart010_pins[] = {
+	TX5_PIN_X_USART0_TX,
+	TX5_PIN_X_USART0_RX,
+	TX5_PIN_X_USART0_CTSN,
+	TX5_PIN_X_USART0_RTSN,
 };
 static const unsigned ftusart010_1_pins[] = {
 	TX5_PIN_X_EQEP_AOUT_10,
@@ -624,10 +662,16 @@ static const unsigned na_pins[] = {
 	TX5_PIN_X_SEC_CPU_TDO,
 	TX5_PIN_X_SEC_CPU_TMS,
 	TX5_PIN_X_SEC_CPU_TRSTn,
+	TX5_PIN_X_UART0_CTSN,
+	TX5_PIN_X_UART1_CTSN,
 	TX5_PIN_X_UART2_CTSN,
 	TX5_PIN_X_UART2_RTSN,
 	TX5_PIN_X_UART2_RX,
 	TX5_PIN_X_UART2_TX,
+	TX5_PIN_X_USART0_CTSN,
+	TX5_PIN_X_USART0_RTSN,
+	TX5_PIN_X_USART0_RX,
+	TX5_PIN_X_USART0_TX,
 	TX5_PIN_X_XMC_ADDR_0,
 	TX5_PIN_X_XMC_ADDR_10,
 	TX5_PIN_X_XMC_ADDR_11,
@@ -685,6 +729,10 @@ static const unsigned sec_subsys_pins[] = {
 	
 static const struct ftscu010_pin_group tx5_groups[] = {
 	GROUP(can_fd_2),
+	GROUP(dac_top),
+	GROUP(dac_top_1),
+	GROUP(dac_top_2),
+	GROUP(dac_top_3),
 	GROUP(ftgpio010),
 	GROUP(ftiic010_2),
 	GROUP(ftiic010_3),
@@ -693,8 +741,11 @@ static const struct ftscu010_pin_group tx5_groups[] = {
 	GROUP(ftsdc021_1),
 	GROUP(ftssp010_2),
 	GROUP(ftssp010_3),
+	GROUP(ftuart010),
+	GROUP(ftuart010_1),
 	GROUP(ftuart010_2),
 	GROUP(ftuart010_3),
+	GROUP(ftusart010),
 	GROUP(ftusart010_1),
 	GROUP(glue_top),
 	GROUP(motor_top),
@@ -706,6 +757,10 @@ static const struct ftscu010_pin_group tx5_groups[] = {
 
 /* Pin function groups */
 static const char * const can_fd_2_groups[] = { "can_fd_2" };
+static const char * const dac_top_groups[] = { "dac_top" };
+static const char * const dac_top_1_groups[] = { "dac_top_1" };
+static const char * const dac_top_2_groups[] = { "dac_top_2" };
+static const char * const dac_top_3_groups[] = { "dac_top_3" };
 static const char * const ftgpio010_groups[] = { "ftgpio010" };
 static const char * const ftiic010_2_groups[] = { "ftiic010_2" };
 static const char * const ftiic010_3_groups[] = { "ftiic010_3" };
@@ -714,8 +769,11 @@ static const char * const ftsdc021_groups[] = { "ftsdc021" };
 static const char * const ftsdc021_1_groups[] = { "ftsdc021_1" };
 static const char * const ftssp010_2_groups[] = { "ftssp010_2" };
 static const char * const ftssp010_3_groups[] = { "ftssp010_3" };
+static const char * const ftuart010_groups[] = { "ftuart010" };
+static const char * const ftuart010_1_groups[] = { "ftuart010_1" };
 static const char * const ftuart010_2_groups[] = { "ftuart010_2" };
 static const char * const ftuart010_3_groups[] = { "ftuart010_3" };
+static const char * const ftusart010_groups[] = { "ftusart010" };
 static const char * const ftusart010_1_groups[] = { "ftusart010_1" };
 static const char * const glue_top_groups[] = { "glue_top" };
 static const char * const motor_top_groups[] = { "motor_top" };
@@ -727,6 +785,10 @@ static const char * const sec_subsys_groups[] = { "sec_subsys" };
 /* Mux functions */
 enum{
 	TX5_MUX_CAN_FD_2,
+	TX5_MUX_DAC_TOP,
+	TX5_MUX_DAC_TOP_1,
+	TX5_MUX_DAC_TOP_2,
+	TX5_MUX_DAC_TOP_3,
 	TX5_MUX_FTGPIO010,
 	TX5_MUX_FTIIC010_2,
 	TX5_MUX_FTIIC010_3,
@@ -735,8 +797,11 @@ enum{
 	TX5_MUX_FTSDC021_1,
 	TX5_MUX_FTSSP010_2,
 	TX5_MUX_FTSSP010_3,
+	TX5_MUX_FTUART010,
+	TX5_MUX_FTUART010_1,
 	TX5_MUX_FTUART010_2,
 	TX5_MUX_FTUART010_3,
+	TX5_MUX_FTUSART010,
 	TX5_MUX_FTUSART010_1,
 	TX5_MUX_GLUE_TOP,
 	TX5_MUX_MOTOR_TOP,
@@ -755,6 +820,10 @@ enum{
 
 static const struct ftscu010_pmx_function tx5_pmx_functions[] = {
 	FUNCTION(can_fd_2),
+	FUNCTION(dac_top),
+	FUNCTION(dac_top_1),
+	FUNCTION(dac_top_2),
+	FUNCTION(dac_top_3),
 	FUNCTION(ftgpio010),
 	FUNCTION(ftiic010_2),
 	FUNCTION(ftiic010_3),
@@ -763,8 +832,11 @@ static const struct ftscu010_pmx_function tx5_pmx_functions[] = {
 	FUNCTION(ftsdc021_1),
 	FUNCTION(ftssp010_2),
 	FUNCTION(ftssp010_3),
+	FUNCTION(ftuart010),
+	FUNCTION(ftuart010_1),
 	FUNCTION(ftuart010_2),
 	FUNCTION(ftuart010_3),
+	FUNCTION(ftusart010),
 	FUNCTION(ftusart010_1),
 	FUNCTION(glue_top),
 	FUNCTION(motor_top),
@@ -902,6 +974,12 @@ static struct ftscu010_pin tx5_pinmux_map[] = {
 	TX5_PIN(X_XMC_DATA_13,		MFS7,	MOTOR_TOP,		FTGPIO010,		NA,			NA),
 	TX5_PIN(X_XMC_DATA_14,		MFS7,	MOTOR_TOP,		FTGPIO010,		NA,			NA),
 	TX5_PIN(X_XMC_DATA_15,		MFS7,	MOTOR_TOP,		FTGPIO010,		NA,			NA),
+	TX5_PIN(X_UART0_CTSN,		MFS7,	FTUART010,		DAC_TOP_1,		NA,			NA),
+	TX5_PIN(X_UART1_CTSN,		MFS7,	FTUART010,		DAC_TOP_2,		NA,			NA),
+	TX5_PIN(X_USART0_TX,		MFS7,	FTUSART010,		DAC_TOP,		NA,			NA),
+	TX5_PIN(X_USART0_RX,		MFS7,	FTUSART010,		DAC_TOP_1,		NA,			NA),
+	TX5_PIN(X_USART0_CTSN,		MFS7,	FTUSART010,		DAC_TOP_2,		NA,			NA),
+	TX5_PIN(X_USART0_RTSN,		MFS7,	FTUSART010,		DAC_TOP_3,		NA,			NA),
 };
 
 static const struct ftscu010_pinctrl_soc_data tx5_pinctrl_soc_data = {

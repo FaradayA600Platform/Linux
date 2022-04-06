@@ -10,6 +10,7 @@
 
 #include <dt-bindings/interrupt-controller/arm-gic.h>
 #include <dt-bindings/pinctrl/pinctrl-tx5.h>
+#include <dt-bindings/clock/clock-tx5.h>
 
 / {
 	model = "TX5";
@@ -32,39 +33,39 @@
 		cpu@0 {
 			device_type = "cpu";
 			compatible = "arm,cortex-a53","arm,armv8";
-			clock-frequency = <1596000000>;
+			clock-frequency = <1200000000>;
 			reg = <0x0 0x000>;
 			enable-method = "psci";
 		};
 		cpu@1 {
 			device_type = "cpu";
 			compatible = "arm,cortex-a53","arm,armv8";
-			clock-frequency = <1596000000>;
+			clock-frequency = <1200000000>;
 			reg = <0x0 0x001>;
-			enable-method = "spin-table";
-			cpu-release-addr = <0x0 0x00070008>;
+			enable-method = "psci";
+			status = "disabled";
 		};
 		cpu@2 {
 			device_type = "cpu";
 			compatible = "arm,cortex-a53","arm,armv8";
-			clock-frequency = <1596000000>;
+			clock-frequency = <1200000000>;
 			reg = <0x0 0x002>;
-			enable-method = "spin-table";
-			cpu-release-addr = <0x0 0x00070008>;
+			enable-method = "psci";
+			status = "disabled";
 		};
 		cpu@3 {
 			device_type = "cpu";
 			compatible = "arm,cortex-a53","arm,armv8";
-			clock-frequency = <1596000000>;
+			clock-frequency = <1200000000>;
 			reg = <0x0 0x003>;
-			enable-method = "spin-table";
-			cpu-release-addr = <0x0 0x00070008>;
+			enable-method = "psci";
+			status = "disabled";
 		};
 	};
 
 	memory@40000000 {
 		device_type = "memory";
-		reg = <0x0 0x40000000 0x0 0x10000000>;
+		reg = <0x0 0x40000000 0x0 0x80000000>;
 	};
 
 	gic: interrupt-controller@03000000 {
@@ -88,308 +89,38 @@
 	};
 
 	chosen {
-		bootargs = "mem=256M console=ttyS0,115200 earlycon=uart8250,mmio32,0x0c600000";
+		bootargs = "mem=2048M console=ttyS0,115200 earlycon=uart8250,mmio32,0x0c600000";
 	};
 
-	clocks {
+	clk: clocks@0c100000 {
 		compatible = "faraday,tx5-clk";
 		reg = <0x0 0x0C100000 0x0 0x1000>;
-		
-		osc0: osc0-48mhz {
-			#clock-cells = <0>;
-			compatible = "tx5,osc0";
-			clock-frequency = <48000000>;
-			clock-output-names = "osc0";
+		reg-names = "scu";
+		#clock-cells = <1>;
 		};
 		
-		osc0_div4: osc0_div4 {
-			#clock-cells = <0>;
-			compatible = "tx5,osc0_div4";
-			clock-mult = <1>;
-			clock-div = <4>;
-			clock-output-names = "osc0_div4";
-			clocks = <&osc0>;
-		};
-		
-		osc1: osc1-32768hz {
-			#clock-cells = <0>;
-			compatible = "tx5,osc1";
-			clock-frequency = <32768>;
-			clock-output-names = "osc1";
-		};
-		
-		pll0: pll0 {
-			#clock-cells = <0>;
-			compatible = "tx5,pll0";
-			clock-div = <1>;
-			clock-output-names = "pll0";
-			clocks = <&osc0_div4>;
-		};
-		
-		pll0_div3: pll0_div3 {
-			#clock-cells = <0>;
-			compatible = "tx5,pll0_div3";
-			clock-mult = <1>;
-			clock-div = <3>;
-			clock-output-names = "pll0_div3";
-			clocks = <&pll0>;
-		};
-		
-		pll1: pll1 {
-			#clock-cells = <0>;
-			compatible = "tx5,pll1";
-			clock-div = <8>;
-			clock-output-names = "pll1";
-			clocks = <&osc0_div4>;
-		};
-		
-		pll2: pll2 {
-			#clock-cells = <0>;
-			compatible = "tx5,pll2";
-			clock-div = <12>;
-			clock-output-names = "pll2";
-			clocks = <&osc0_div4>;
-		};
-		
-		pll2_div2: pll2_div2 {
-			#clock-cells = <0>;
-			compatible = "tx5,pll2_div2";
-			clock-mult = <1>;
-			clock-div = <2>;
-			clock-output-names = "pll2_div2";
-			clocks = <&pll2>;
-		};
-		
-		pll2_div4: pll2_div4 {
-			#clock-cells = <0>;
-			compatible = "tx5,pll2_div4";
-			clock-mult = <1>;
-			clock-div = <4>;
-			clock-output-names = "pll2_div4";
-			clocks = <&pll2>;
-		};
-		
-		pll2_div8: pll2_div8 {
-			#clock-cells = <0>;
-			compatible = "tx5,pll2_div8";
-			clock-mult = <1>;
-			clock-div = <8>;
-			clock-output-names = "pll2_div8";
-			clocks = <&pll2>;
-		};
-		
-		pll2_div16: pll2_div16 {
-			#clock-cells = <0>;
-			compatible = "tx5,pll2_div16";
-			clock-mult = <1>;
-			clock-div = <16>;
-			clock-output-names = "pll2_div16";
-			clocks = <&pll2>;
-		};
-		
-		pll2_div32: pll2_div32 {
-			#clock-cells = <0>;
-			compatible = "tx5,pll2_div32";
-			clock-mult = <1>;
-			clock-div = <32>;
-			clock-output-names = "pll2_div32";
-			clocks = <&pll2>;
-		};
-		
-		pll3: pll3 {
-			#clock-cells = <0>;
-			compatible = "tx5,pll3";
-			clock-div = <1>;
-			clock-output-names = "pll3";
-			clocks = <&osc0_div4>;
-		};
-		
-		pll3_div5: pll3_div5 {
-			#clock-cells = <0>;
-			compatible = "tx5,pll3_div5";
-			clock-mult = <1>;
-			clock-div = <5>;
-			clock-output-names = "pll3_div5";
-			clocks = <&pll3>;
-		};
-		
-		pll3_div12: pll3_div12 {
-			#clock-cells = <0>;
-			compatible = "tx5,pll3_div12";
-			clock-mult = <1>;
-			clock-div = <12>;
-			clock-output-names = "pll3_div12";
-			clocks = <&pll3>;
-		};
-		
-		pll3_div30: pll3_div30 {
-			#clock-cells = <0>;
-			compatible = "tx5,pll3_div30";
-			clock-mult = <1>;
-			clock-div = <30>;
-			clock-output-names = "pll3_div30";
-			clocks = <&pll3>;
-		};
-		
-		pll3_div60: pll3_div60 {
-			#clock-cells = <0>;
-			compatible = "tx5,pll3_div60";
-			clock-mult = <1>;
-			clock-div = <60>;
-			clock-output-names = "pll3_div60";
-			clocks = <&pll3>;
-		};
-		
-		pll3_div600: pll3_div600 {
-			#clock-cells = <0>;
-			compatible = "tx5,pll3_div600";
-			clock-mult = <1>;
-			clock-div = <600>;
-			clock-output-names = "pll3_div600";
-			clocks = <&pll3>;
-		};
-
-		pll3_div25: pll3_div25 {
-			#clock-cells = <0>;
-			compatible = "tx5,pll3_div25";
-			clock-mult = <1>;
-			clock-div = <25>;
-			clock-output-names = "pll3_div25";
-			clocks = <&pll3>;
-		};
-		
-		pll4: pll4 {
-			#clock-cells = <0>;
-			compatible = "tx5,pll4";
-			clock-div = <2>;
-			clock-output-names = "pll4";
-			clocks = <&osc0>;
-		};
-		
-		cpu: cpu {
-			#clock-cells = <0>;
-			compatible = "tx5,cpu";
-			clock-mult = <1>;
-			clock-div = <1>;
-			clock-output-names = "cpu";
-			clocks = <&pll0>;
-		};
-		
-		ddrmclk: ddrmclk {
-			#clock-cells = <0>;
-			compatible = "tx5,ddrmclk";
-			clock-mult = <1>;
-			clock-div = <1>;
-			clock-output-names = "ddrmclk";
-			clocks = <&pll4>;
-		};
-		
-		axi: axi {
-			#clock-cells = <0>;
-			compatible = "tx5,axi";
-			clock-mult = <1>;
-			clock-div = <1>;
-			clock-output-names = "axi";
-			clocks = <&pll2_div2>, <&pll2_div4>;
-		};
-		
-		aclk: aclk {
-			#clock-cells = <0>;
-			compatible = "tx5,aclk";
-			clock-mult = <1>;
-			clock-div = <1>;
-			clock-output-names = "aclk";
-			clocks = <&pll2_div2>, <&pll2_div4>;
-		};
-		
-		ahb: ahb {
-			#clock-cells = <0>;
-			compatible = "tx5,ahb";
-			clock-mult = <1>;
-			clock-div = <1>;
-			clock-output-names = "ahb";
-			clocks = <&pll2_div8>, <&pll2_div16>;
-		};
-		
-		hclk: hclk {
-			#clock-cells = <0>;
-			compatible = "tx5,hclk";
-			clock-mult = <1>;
-			clock-div = <1>;
-			clock-output-names = "hclk";
-			clocks = <&pll2_div8>, <&pll2_div16>;
-		};
-		
-		apb: apb {
-			#clock-cells = <0>;
-			compatible = "tx5,apb";
-			clock-mult = <1>;
-			clock-div = <1>;
-			clock-output-names = "APB";
-			clocks = <&pll2_div16>, <&pll2_div32>;
-		};
-		
-		pclk: pclk {
-			#clock-cells = <0>;
-			compatible = "tx5,pclk";
-			clock-mult = <1>;
-			clock-div = <1>;
-			clock-output-names = "pclk";
-			clocks = <&pll2_div16>, <&pll2_div32>;
-		};
-		
-		sdclk: sdclk {
-			#clock-cells = <0>;
-			compatible = "tx5,sdclk";
-			clock-mult = <1>;
-			clock-div = <1>;
-			clock-output-names = "sdclk";
-			clocks = <&hclk>;
-		};
-		
-		spiclk: spiclk {
-			#clock-cells = <0>;
-			compatible = "tx5,spiclk";
-			clock-mult = <1>;
-			clock-div = <1>;
-			clock-output-names = "spiclk";
-			clocks = <&hclk>;
-		};
-		
-		sspclk: sspclk {
-			#clock-cells = <0>;
-			compatible = "tx5,sspclk";
-			clock-mult = <1>;
-			clock-div = <1>;
-			clock-output-names = "sspclk";
-			clocks = <&hclk>;
-		};
-		
-		gmacclk: gmacclk {
-			#clock-cells = <0>;
-			compatible = "tx5,gmacclk";
-			clock-mult = <1>;
-			clock-div = <1>;
-			clock-output-names = "gmacclk";
-			clocks = <&hclk>;
-		};
-		
-		lcclk: lcclk {
-			#clock-cells = <0>;
-			compatible = "tx5,lcclk";
-			clock-output-names = "lcclk";
-			clock-mult = <1>;
-			clock-div = <1>;
-			clocks = <&pll1>;
-		};
-	};
-
 	pinctrl {
 		compatible = "ftscu010-pinmux", "pinctrl-tx5";
 		reg = <0x0 0x0c100000 0x0 0xa000>;
 		
 		pinctrl_can_fd_2: pinctrl_can_fd_2 {
 			scu010,function = <TX5_MUX_CAN_FD_2>;
+		};
+		
+		pinctrl_dac_top: pinctrl_dac_top {
+			scu010,function = <TX5_MUX_DAC_TOP>;
+		};
+		
+		pinctrl_dac_top_1: pinctrl_dac_top_1 {
+			scu010,function = <TX5_MUX_DAC_TOP_1>;
+		};
+		
+		pinctrl_dac_top_2: pinctrl_dac_top_2 {
+			scu010,function = <TX5_MUX_DAC_TOP_2>;
+		};
+		
+		pinctrl_dac_top_3: pinctrl_dac_top_3 {
+			scu010,function = <TX5_MUX_DAC_TOP_3>;
 		};
 		
 		pinctrl_ftgpio010: pinctrl_ftgpio010 {
@@ -424,12 +155,24 @@
 			scu010,function = <TX5_MUX_FTSSP010_3>;
 		};
 		
+		pinctrl_ftuart010: pinctrl_ftuart010 {
+			scu010,function = <TX5_MUX_FTUART010>;
+		};
+		
+		pinctrl_ftuart010_1: pinctrl_ftuart010_1 {
+			scu010,function = <TX5_MUX_FTUART010_1>;
+		};
+		
 		pinctrl_ftuart010_2: pinctrl_ftuart010_2 {
 			scu010,function = <TX5_MUX_FTUART010_2>;
 		};
 		
 		pinctrl_ftuart010_3: pinctrl_ftuart010_3 {
 			scu010,function = <TX5_MUX_FTUART010_3>;
+		};
+		
+		pinctrl_ftusart010: pinctrl_ftusart010 {
+			scu010,function = <TX5_MUX_FTUSART010>;
 		};
 		
 		pinctrl_ftusart010_1: pinctrl_ftusart010_1 {
@@ -468,9 +211,9 @@
 			interrupt-parent = <&gic>;
 			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
 			reg = <0x0 0x04f00000 0x0 0x100>;
-			clocks = <&apb>;
-			clock-names = "APB";
-			status = "okay";
+			clocks = <&clk TX5_APB_CLK>;
+			clock-names = "pclk";
+			status = "disabled";
 		};
 
 		sys_timer1: timer@05000000 {
@@ -478,8 +221,8 @@
 			interrupt-parent = <&gic>;
 			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
 			reg = <0x0 0x05000000 0x0 0x100>;
-			clocks = <&apb>;
-			clock-names = "APB";
+			clocks = <&clk TX5_APB_CLK>;
+			clock-names = "pclk";
 			status = "disabled";
 		};
 
@@ -488,9 +231,9 @@
 			interrupt-parent = <&gic>;
 			interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
 			reg = <0x0 0x05100000 0x0 0x100>;
-			clocks = <&apb>;
-			clock-names = "APB";
-			status = "okay";
+			clocks = <&clk TX5_APB_CLK>;
+			clock-names = "pclk";
+			status = "disabled";
 		};
 
 		uart0: uart@0c600000 {
@@ -516,7 +259,7 @@
 			reg-io-width = <4>;
 			no-loopback-test;
 			interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
-			status = "disabled";
+			status = "okay";
 		};
 
 		uart2: uart@0c800000 {
@@ -531,7 +274,7 @@
 			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
 			pinctrl-0 = <&pinctrl_ftuart010_2>;
 			pinctrl-names = "sleep";
-			status = "disabled";
+			status = "okay";
 		};
 
 		uart3: uart@0c900000 {
@@ -546,7 +289,7 @@
 			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
 			pinctrl-0 = <&pinctrl_ftuart010_3>;
 			pinctrl-names = "sleep";
-			status = "disabled";
+			status = "okay";
 		};
 
 		usart0: usart@0c400000 {
@@ -582,7 +325,7 @@
 			interrupt-parent = <&gic>;
 			reg = <0x0 0x04d00000 0x0 0x1000>;
 			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&pclk>;
+			clocks = <&clk TX5_APB_CLK>;
 			clock-names = "pclk";
 			status = "disabled";
 		};
@@ -592,7 +335,7 @@
 			interrupt-parent = <&gic>;
 			reg = <0x0 0x04e00000 0x0 0x1000>;
 			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&pclk>;
+			clocks = <&clk TX5_APB_CLK>;
 			clock-names = "pclk";
 			status = "disabled";
 		};
@@ -619,7 +362,7 @@
 			dev_id = <0>;
 			reg = <0x0 0x0ca00000 0x0 0x1000>;
 			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&pclk>;
+			clocks = <&clk TX5_APB_CLK>;
 			clock-names = "pclk";
 			status = "okay";
 		};
@@ -630,7 +373,7 @@
 			dev_id = <1>;
 			reg = <0x0 0x0cb00000 0x0 0x1000>;
 			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&pclk>;
+			clocks = <&clk TX5_APB_CLK>;
 			clock-names = "pclk";
 			status = "okay";
 		};
@@ -641,7 +384,7 @@
 			dev_id = <2>;
 			reg = <0x0 0x0cc00000 0x0 0x1000>;
 			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&pclk>;
+			clocks = <&clk TX5_APB_CLK>;
 			clock-names = "pclk";
 			pinctrl-0 = <&pinctrl_ftiic010_2>;
 			pinctrl-names = "sleep";
@@ -654,7 +397,7 @@
 			dev_id = <3>;
 			reg = <0x0 0x0cd00000 0x0 0x1000>;
 			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&pclk>;
+			clocks = <&clk TX5_APB_CLK>;
 			clock-names = "pclk";
 			pinctrl-0 = <&pinctrl_ftiic010_3>;
 			pinctrl-names = "sleep";
@@ -678,7 +421,7 @@
 			interrupt-parent = <&gic>;
 			reg = <0x0 0x04f00000 0x0 0x1000>;
 			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&pclk>;
+			clocks = <&clk TX5_APB_CLK>;
 			clock-names = "pclk";
 			pinctrl-0 = <&pinctrl_ftpwmtmr010>;
 			pinctrl-names = "sleep";
@@ -690,7 +433,7 @@
 			interrupt-parent = <&gic>;
 			reg = <0x0 0x05000000 0x0 0x1000>;
 			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&pclk>;
+			clocks = <&clk TX5_APB_CLK>;
 			clock-names = "pclk";
 			status = "disabled";
 		};
@@ -722,7 +465,7 @@
 			reg = <0x0 0x03600000 0x0 0x1000>;
 			reg-names = "ctrl-port";
 			interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&spiclk>;
+			clocks = <&clk TX5_SPICLK>;
 			clock-names = "spiclk";
 			status = "okay";
 			
@@ -746,7 +489,7 @@
 			dev_id = <1>;
 			reg = <0x0 0x04900000 0x0 0x1000>;
 			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&sspclk>;
+			clocks = <&clk TX5_SSP0_SSPCLK>;
 			clock-names = "sspclk";
 			status = "okay";
 			
@@ -754,10 +497,18 @@
 			#size-cells = <0>;
 			dmas = <&dma0 0 0xff 7>, <&dma0 0 0xff 8>; /* id, channel, req-sel */
 			dma-names = "tx", "rx";
-			spidev1: master@0 {
+			/*spidev1: master@0 {
 				compatible = "rohm,dh2228fv";
 				spi-max-frequency = <10000000>;
 				reg = <0>;
+			};*/
+			spidev1: flash@0 { //0x010215
+				compatible = "jedec,spi-nor";
+				spi-max-frequency = <10000000>;
+				spi-tx-bus-width = <4>;
+				spi-rx-bus-width = <4>;
+				reg = <0x0>;
+				is-nand = <0>;
 			};
 		};
 
@@ -767,18 +518,26 @@
 			dev_id = <2>;
 			reg = <0x0 0x04a00000 0x0 0x1000>;
 			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&sspclk>;
+			clocks = <&clk TX5_SSP1_SSPCLK>;
 			clock-names = "sspclk";
-			status = "disabled";
+			status = "okay";
 			
 			#address-cells = <1>;
 			#size-cells = <0>;
 			dmas = <&dma0 0 0xff 9>, <&dma0 0 0xff 10>; /* id, channel, req-sel */
 			dma-names = "tx", "rx";
-			spidev2: master@0 {
+			/*spidev2: master@0 {
 				compatible = "rohm,dh2228fv";
 				spi-max-frequency = <10000000>;
 				reg = <0>;
+			};*/
+			spidev2: flash@0 { //0x010215
+				compatible = "jedec,spi-nor";
+				spi-max-frequency = <10000000>;
+				spi-tx-bus-width = <4>;
+				spi-rx-bus-width = <4>;
+				reg = <0x0>;
+				is-nand = <0>;
 			};
 		};
 
@@ -788,20 +547,28 @@
 			dev_id = <3>;
 			reg = <0x0 0x04b00000 0x0 0x1000>;
 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&sspclk>;
+			clocks = <&clk TX5_SSP2_SSPCLK>;
 			clock-names = "sspclk";
 			pinctrl-0 = <&pinctrl_ftssp010_2>;
 			pinctrl-names = "sleep";
-			status = "disabled";
+			status = "okay";
 			
 			#address-cells = <1>;
 			#size-cells = <0>;
 			dmas = <&dma1 0 0xff 10>, <&dma1 0 0xff 11>; /* id, channel, req-sel */
 			dma-names = "tx", "rx";
-			spidev3: master@0 {
+			/*spidev3: master@0 {
 				compatible = "rohm,dh2228fv";
 				spi-max-frequency = <10000000>;
 				reg = <0>;
+			};*/
+			spidev3: flash@0 { //0x010215
+				compatible = "jedec,spi-nor";
+				spi-max-frequency = <10000000>;
+				spi-tx-bus-width = <4>;
+				spi-rx-bus-width = <4>;
+				reg = <0x0>;
+				is-nand = <0>;
 			};
 		};
 
@@ -811,20 +578,28 @@
 			dev_id = <4>;
 			reg = <0x0 0x04c00000 0x0 0x1000>;
 			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
-			clocks = <&sspclk>;
+			clocks = <&clk TX5_SSP3_SSPCLK>;
 			clock-names = "sspclk";
 			pinctrl-0 = <&pinctrl_ftssp010_3>;
 			pinctrl-names = "sleep";
-			status = "disabled";
+			status = "okay";
 			
 			#address-cells = <1>;
 			#size-cells = <0>;
 			dmas = <&dma1 0 0xff 12>, <&dma1 0 0xff 13>; /* id, channel, req-sel */
 			dma-names = "tx", "rx";
-			spidev4: master@0 {
+			/*spidev4: master@0 {
 				compatible = "rohm,dh2228fv";
 				spi-max-frequency = <10000000>;
 				reg = <0>;
+			};*/
+			spidev4: flash@0 { //0x010215
+				compatible = "jedec,spi-nor";
+				spi-max-frequency = <10000000>;
+				spi-tx-bus-width = <4>;
+				spi-rx-bus-width = <4>;
+				reg = <0x0>;
+				is-nand = <0>;
 			};
 		};
 
@@ -833,7 +608,8 @@
 			interrupt-parent = <&gic>;
 			reg = <0x0 0x02200000 0x0 0x1000>;
 			interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-			clock-frequency = <200000000>;
+			clocks = <&clk TX5_SD0_SDCLK1X>;
+			clock-names = "sdclk1x";
 			pinctrl-0 = <&pinctrl_ftsdc021>;
 			pinctrl-names = "sleep";
 			pulse-latch = <0>;
@@ -846,7 +622,8 @@
 			interrupt-parent = <&gic>;
 			reg = <0x0 0x02300000 0x0 0x1000>;
 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-			clock-frequency = <200000000>;
+			clocks = <&clk TX5_SD1_SDCLK1X>;
+			clock-names = "sdclk1x";
 			pinctrl-0 = <&pinctrl_ftsdc021_1>;
 			pinctrl-names = "sleep";
 			pulse-latch = <0>;
@@ -855,7 +632,7 @@
 		};
 
 		usb0: usb_hcd@03100000 {
-			compatible = "xhci-hcd";
+			compatible = "xhci-platform";
 			interrupt-parent = <&gic>;
 			reg = <0x0 0x03100000 0x0 0x1000>;
 			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
@@ -907,8 +684,8 @@
 			interrupt-parent = <&gic>;
 			dev_id = <0>;
 			reg = <0x0 0x05200000 0x0 0x1000>;
-			clocks = <&gmacclk>;
-			clock-names = "gmacclk";
+			clocks = <&clk TX5_GMAC0_ACLK>;
+			clock-names = "sysclk";
 			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
 			status = "okay";
 		};
@@ -918,8 +695,8 @@
 			interrupt-parent = <&gic>;
 			dev_id = <1>;
 			reg = <0x0 0x05300000 0x0 0x1000>;
-			clocks = <&gmacclk>;
-			clock-names = "gmacclk";
+			clocks = <&clk TX5_GMAC1_ACLK>;
+			clock-names = "sysclk";
 			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
 			status = "okay";
 		};

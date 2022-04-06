@@ -25,6 +25,7 @@
 #include <linux/reset.h>
 #include <linux/pci.h>
 #include <linux/platform_device.h>
+#include <linux/platform_data/pci-faraday.h>
 
 #include "pcie-ftpciesnps330.h"
 #include "pcie-designware.h"
@@ -71,7 +72,7 @@ struct ftpciesnps330_pcie {
 
 static void ftpciesnps330_pcie_prog_outbound_atu(struct dw_pcie *pci, int index, int type,
 			u64 cpu_addr, u64 pci_addr, u32 size)
-{	
+{
 	writel(lower_32_bits(cpu_addr),        pci->dbi_base + IATU_OUTBOUND_LOWER_BASE(index));
 	writel(upper_32_bits(cpu_addr),        pci->dbi_base + IATU_OUTBOUND_UPPER_BASE(index));
 	writel(lower_32_bits(cpu_addr) + size, pci->dbi_base + IATU_OUTBOUND_LIMIT(index));
@@ -80,7 +81,7 @@ static void ftpciesnps330_pcie_prog_outbound_atu(struct dw_pcie *pci, int index,
 	writel(type,                           pci->dbi_base + IATU_OUTBOUND_REGION_CR1(index));
 	writel(0x80000000,                     pci->dbi_base + IATU_OUTBOUND_REGION_CR2(index));
 }
-		
+
 static void ftpciesnps330_pcie_prog_inbound_atu(struct dw_pcie *pci, int index,int type, 
 		u64 cpu_addr, u64 pci_addr, u32 size)
 {
@@ -549,11 +550,32 @@ static void ftpciesnps330_pcie_phy_init(struct pcie_port *pp)
 	writel(val, hw->phy_base + 0xC120);
 
 #elif CONFIG_A600_PLATFORM
+	int i;
 
-	// workaround: reduce tx_rxdet_time
-	val = readl(hw->phy_base + 0x409C) & ~0x000003FF;
+	// workaround: reduce tx_rxdet_time (by ADDR=0x1N27)
+	val = readl(hw->phy_base + DWC_APB2CR(0x9027)) & ~0x000003FF;
 	val |= 0x000000B2;
-	writel(val, hw->phy_base + 0x409C);
+	writel(val, hw->phy_base + DWC_APB2CR(0x9027));
+
+//	// workaround: override tx_detrx_result (by ADDR=0x1N04)
+//	val = readl(hw->phy_base + DWC_APB2CR(0x9004));
+//	val |= 0x0000000C;
+//	writel(val, hw->phy_base + DWC_APB2CR(0x9004));
+
+#if 0
+	// workaround: override Rx EQ setting (by ADDR=0x3N1c, 0x3N1f)
+	writel(0x0000022D, hw->phy_base + DWC_APB2CR(0xa01c));	// 0x3N1c
+	writel(0x0000140A, hw->phy_base + DWC_APB2CR(0xa01f));	// 0x3N1f
+
+	// workaround: override Rx MISC setting (by ADDR=0x1N1b)
+	writel(0x00000103, hw->phy_base + DWC_APB2CR(0x901b));	// 0x1N1b
+#elif 1
+	// workaround: apply short channel firmware
+	for(i = 0; i < sizeof(dwc_pcie4_phy_x4)/sizeof(int)/2; i++) {
+		writel(dwc_pcie4_phy_x4[i].value, 
+		       hw->phy_base + DWC_APB2CR(dwc_pcie4_phy_x4[i].addr));
+	}
+#endif
 #endif
 }
 
@@ -570,7 +592,7 @@ static void ftpciesnps330_pcie_phy_init(struct pcie_port *pp)
 	scu_va = ioremap(0x13000000, 0x10000);
 
 	pp->bridge->child_ops= &ftpciesnps330_pci_ops;
-	
+
 	// set PCIE's mode to RC (PCIE0, PCIE1)
 	val = 0x00000008;
 	writel(val, scu_va + 0x8358);
@@ -659,9 +681,9 @@ static void ftpciesnps330_pcie_phy_init(struct pcie_port *pp)
 	dw_pcie_wait_for_link(pci);
 
 	resource_list_for_each_entry(tmp, &pp->bridge->windows)
-		if (resource_type(tmp->res) == IORESOURCE_MEM){
-			entry = tmp;
-		}
+	if (resource_type(tmp->res) == IORESOURCE_MEM) {
+		entry = tmp;
+	}
 
 	// setup memory mapping
 	ftpciesnps330_pcie_prog_outbound_atu(pci, IATU_REGION1,

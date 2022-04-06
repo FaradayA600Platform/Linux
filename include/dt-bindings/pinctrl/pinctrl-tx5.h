@@ -22,22 +22,29 @@
 #define __DT_BINDINGS_PINCTRL_TX5_H__
 
 #define TX5_MUX_CAN_FD_2            0
-#define TX5_MUX_FTGPIO010           1
-#define TX5_MUX_FTIIC010_2          2
-#define TX5_MUX_FTIIC010_3          3
-#define TX5_MUX_FTPWMTMR010         4
-#define TX5_MUX_FTSDC021            5
-#define TX5_MUX_FTSDC021_1          6
-#define TX5_MUX_FTSSP010_2          7
-#define TX5_MUX_FTSSP010_3          8
-#define TX5_MUX_FTUART010_2         9
-#define TX5_MUX_FTUART010_3         10
-#define TX5_MUX_FTUSART010_1        11
-#define TX5_MUX_GLUE_TOP            12
-#define TX5_MUX_MOTOR_TOP           13
-#define TX5_MUX_NA                  14
-#define TX5_MUX_SBS_GMAC            15
-#define TX5_MUX_SBS_GMAC_1          16
-#define TX5_MUX_SEC_SUBSYS          17
+#define TX5_MUX_DAC_TOP             1
+#define TX5_MUX_DAC_TOP_1           2
+#define TX5_MUX_DAC_TOP_2           3
+#define TX5_MUX_DAC_TOP_3           4
+#define TX5_MUX_FTGPIO010           5
+#define TX5_MUX_FTIIC010_2          6
+#define TX5_MUX_FTIIC010_3          7
+#define TX5_MUX_FTPWMTMR010         8
+#define TX5_MUX_FTSDC021            9
+#define TX5_MUX_FTSDC021_1          10
+#define TX5_MUX_FTSSP010_2          11
+#define TX5_MUX_FTSSP010_3          12
+#define TX5_MUX_FTUART010           13
+#define TX5_MUX_FTUART010_1         14
+#define TX5_MUX_FTUART010_2         15
+#define TX5_MUX_FTUART010_3         16
+#define TX5_MUX_FTUSART010          17
+#define TX5_MUX_FTUSART010_1        18
+#define TX5_MUX_GLUE_TOP            19
+#define TX5_MUX_MOTOR_TOP           20
+#define TX5_MUX_NA                  21
+#define TX5_MUX_SBS_GMAC            22
+#define TX5_MUX_SBS_GMAC_1          23
+#define TX5_MUX_SEC_SUBSYS          24
 
 #endif	/* __DT_BINDINGS_PINCTRL_TX5_H__ */

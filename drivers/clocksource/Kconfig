@@ -734,4 +734,9 @@ config FTTMR010
 	select TIMER_OF if OF
 	select CLKSRC_MMIO
 
+config FTPWMTMR010
+	bool
+	select TIMER_OF if OF
+	select CLKSRC_MMIO
+
 endmenu

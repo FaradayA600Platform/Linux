@@ -95,3 +95,4 @@ obj-$(CONFIG_HYPERV_TIMER)		+= hyperv_timer.o
 obj-$(CONFIG_MICROCHIP_PIT64B)		+= timer-microchip-pit64b.o
 
 obj-$(CONFIG_FTTMR010)	+= fttmr010.o
+obj-$(CONFIG_FTPWMTMR010)	+= ftpwmtmr010.o
