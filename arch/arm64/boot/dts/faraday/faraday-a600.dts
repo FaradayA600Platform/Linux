@@ -42,7 +42,7 @@
 			clock-frequency = <1500000000>;
 			reg = <0x0 0x101>;
 			enable-method = "spin-table";
-			cpu-release-addr = <0x0 0x28030008>;
+			cpu-release-addr = <0x0 0x28030010>;
 		};
 		cpu@2 {
 			device_type = "cpu";
@@ -50,7 +50,7 @@
 			clock-frequency = <1500000000>;
 			reg = <0x0 0x102>;
 			enable-method = "spin-table";
-			cpu-release-addr = <0x0 0x28030008>;
+			cpu-release-addr = <0x0 0x28030010>;
 		};
 		cpu@3 {
 			device_type = "cpu";
@@ -58,7 +58,7 @@
 			clock-frequency = <1500000000>;
 			reg = <0x0 0x103>;
 			enable-method = "spin-table";
-			cpu-release-addr = <0x0 0x28030008>;
+			cpu-release-addr = <0x0 0x28030010>;
 		};
 	};
 
